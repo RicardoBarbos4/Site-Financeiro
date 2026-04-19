@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Controle Financeiro Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="main-header">
+            <h1>Controle de Gastos</h1>
+            
+            <div class="summary-cards">
+                <div class="card income">
+                    <span>Sobra Geral</span>
+                    <strong id="total-balance">R$ 0,00</strong>
+                </div>
+                <div class="card info">
+                    <span><i class="fas fa-gas-pump"></i> Gasolina</span>
+                    <strong id="sum-gas">R$ 0,00</strong>
+                </div>
+                <div class="card info">
+                    <span><i class="fas fa-shopping-cart"></i> Mercado</span>
+                    <strong id="sum-market">R$ 0,00</strong>
+                </div>
+                <div class="card extra">
+                    <span><i class="fas fa-plus-circle"></i> Renda Extra</span>
+                    <strong id="sum-extra">R$ 0,00</strong>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <section class="input-section">
+                <h2 id="form-title">Lançar Registro</h2>
+                <div class="form-group">
+                    <input type="hidden" id="edit-id">
+                    <input type="text" id="desc" placeholder="Ex: Mercado BH, Gasolina Shell...">
+                    <input type="number" id="val" placeholder="Valor (Ex: 150.00)">
+                    
+                    <label>Categoria:</label>
+                    <select id="type">
+                        <option value="income">Salário / Fixo</option>
+                        <option value="extra">Renda Extra</option>
+                        <option value="gas">Gasolina</option>
+                        <option value="market">Mercado</option>
+                        <option value="expense">Outros Gastos</option>
+                    </select>
+                    
+                    <button id="btn-save" onclick="handleSave()">Salvar</button>
+                    <button id="btn-cancel" onclick="clearForm()" style="display:none; background: #323238;">Cancelar</button>
+                </div>
+            </section>
+
+            <section class="list-section">
+                <h2>Histórico</h2>
+                <ul id="transaction-list"></ul>
+            </section>
+        </main>
+    </div>
+
+    <div class="month-filter">
+    <label>Filtrar Mês:</label>
+    <input type="month" id="filter-month" onchange="updateUI()">
+</div>
+
+<section class="yearly-summary">
+    <h2>Resumo do Ano</h2>
+    <div id="year-list" class="year-grid">
+        </div>
+</section>
+
+    <script src="script.js"></script>
+</body>
+</html>
