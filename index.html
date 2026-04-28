@@ -4,274 +4,924 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle Financeiro Pro</title>
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #0e0e10;
+  --bg2: #18181b;
+  --card-bg: #1c1c1f;
+  --card-hover: #222226;
+  --border: rgba(255,255,255,0.07);
+  --text: #e4e4e7;
+  --text-sub: #71717a;
+  --primary: #7c3aed;
+  --primary-lt: #a78bfa;
+  --green: #22c55e;
+  --red: #f43f5e;
+  --yellow: #eab308;
+  --orange: #f97316;
+  --teal: #14b8a6;
+  --purple-dim: rgba(124,58,237,0.12);
+  --green-dim:  rgba(34,197,94,0.12);
+  --red-dim:    rgba(244,63,94,0.12);
+  --yellow-dim: rgba(234,179,8,0.12);
+  --orange-dim: rgba(249,115,22,0.12);
+  --teal-dim:   rgba(20,184,166,0.12);
+  --radius: 12px;
+  --radius-lg: 18px;
+  --tr: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 24px 16px 60px;
+  min-height: 100vh;
+}
+
+.dashboard {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* HEADER */
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+}
+
+.header-title { display: flex; align-items: center; gap: 14px; }
+.header-title > i {
+  font-size: 1.8rem; color: var(--primary-lt); background: var(--purple-dim);
+  width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius);
+}
+
+.header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.month-filter {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+#filter-month {
+  background: transparent; border: none; color: var(--text);
+  font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;
+}
+
+.last-saved-badge {
+  display: none; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-sub);
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 6px 12px;
+}
+.last-saved-badge.visible { display: flex; }
+.last-saved-badge i { color: var(--green); font-size: 8px; }
+
+/* SUMMARY CARDS */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+  transition: transform var(--tr), border-color var(--tr), box-shadow var(--tr);
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
+}
+
+.card-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+
+.card-info span  { font-size: 0.7rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
+.card-info strong { font-size: 1.1rem; display: block; white-space: nowrap; }
+
+.balance-card { border-bottom: 3px solid var(--primary); }
+.income-card  { border-bottom: 3px solid var(--green); }
+.expense-card { border-bottom: 3px solid var(--red); }
+.gas-card     { border-bottom: 3px solid var(--yellow); }
+.market-card  { border-bottom: 3px solid var(--orange); }
+.extra-card   { border-bottom: 3px solid var(--green); }
+.casa-card    { border-bottom: 3px solid var(--teal); }
+
+.balance-card .card-icon { background: var(--purple-dim); color: var(--primary-lt); }
+.income-card  .card-icon { background: var(--green-dim);  color: var(--green); }
+.expense-card .card-icon { background: var(--red-dim);    color: var(--red); }
+.gas-card     .card-icon { background: var(--yellow-dim); color: var(--yellow); }
+.market-card  .card-icon { background: var(--orange-dim); color: var(--orange); }
+.extra-card   .card-icon { background: var(--green-dim);  color: var(--green); }
+.casa-card    .card-icon { background: var(--teal-dim);   color: var(--teal); }
+
+/* CONTENT */
+.content {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+}
+
+/* FORM */
+.form-group {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  position: sticky; top: 20px; height: fit-content;
+}
+
+.form-group h2 {
+  font-size: 0.95rem; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 4px; border-bottom: 1px solid var(--border);
+}
+.form-group h2 i { color: var(--primary-lt); font-size: 0.85rem; }
+
+.field label {
+  display: block; font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--text-sub); margin-bottom: 6px;
+}
+
+input, select {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 11px 12px;
+  color: #fff; font-family: 'Inter', sans-serif;
+  font-size: 0.9rem; width: 100%; outline: none;
+  transition: border-color var(--tr), box-shadow var(--tr);
+}
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+}
+select option { background: var(--bg2); }
+
+/* BTN SALVAR */
+.btn-save {
+  position: relative;
+  width: 100%; padding: 13px 20px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  transition: filter var(--tr), transform var(--tr), box-shadow var(--tr), background var(--tr);
+  box-shadow: 0 4px 18px rgba(124,58,237,0.35);
+}
+.btn-save:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(124,58,237,0.45);
+}
+.btn-save:active { transform: scale(0.98); }
+
+.btn-save.saved {
+  background: var(--green);
+  box-shadow: 0 4px 18px rgba(34,197,94,0.35);
+  filter: none;
+}
+.btn-save.error {
+  background: var(--red);
+  box-shadow: 0 4px 18px rgba(244,63,94,0.35);
+  animation: shake 0.35s ease;
+  filter: none;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px); }
+}
+
+.btn-save .ripple-el {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  transform: scale(0);
+  animation: ripple 0.5s linear;
+  pointer-events: none;
+}
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+.save-feedback {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 12px; color: var(--green); height: 18px;
+  opacity: 0; transition: opacity 0.3s;
+}
+.save-feedback.show { opacity: 1; }
+
+/* BTN CANCELAR */
+#btn-cancel {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-sub); border-radius: 10px; padding: 10px;
+  font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: background var(--tr), color var(--tr), border-color var(--tr);
+}
+#btn-cancel:hover {
+  background: var(--card-hover);
+  border-color: rgba(255,255,255,0.15);
+  color: var(--text);
+}
+
+/* LIST */
+.list-section { display: flex; flex-direction: column; gap: 16px; }
+
+.list-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.list-header h2 {
+  font-size: 0.95rem; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.list-header h2 i { color: var(--primary-lt); font-size: 0.85rem; }
+.list-header span { font-size: 0.75rem; color: var(--text-sub); }
+
+#transaction-list { display: flex; flex-direction: column; gap: 10px; list-style: none; }
+
+.item {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: var(--tr);
+}
+.item:hover { background: var(--card-hover); transform: translateX(4px); }
+
+.item-left  { display: flex; flex-direction: column; gap: 4px; }
+.item-desc  { font-weight: 500; font-size: 0.95rem; }
+.item-cat {
+  font-size: 0.65rem; text-transform: uppercase; font-weight: 700;
+  background: var(--bg2); padding: 2px 8px; border-radius: 4px;
+  width: fit-content; color: var(--text-sub);
+}
+.item-right { display: flex; align-items: center; gap: 16px; }
+.item-val   { font-weight: 700; font-size: 1rem; }
+
+.item.income .item-val, .item.extra .item-val { color: var(--green); }
+.item.expense .item-val { color: var(--red); }
+.item.gas    .item-val  { color: var(--yellow); }
+.item.market .item-val  { color: var(--orange); }
+.item.casa   .item-val  { color: var(--teal); }
+
+.actions { display: flex; gap: 8px; }
+.actions i { cursor: pointer; opacity: 0.4; transition: 0.2s; padding: 5px; }
+.actions i:hover { opacity: 1; transform: scale(1.1); }
+.fa-trash:hover { color: var(--red); }
+.fa-pen-to-square:hover, .fa-edit:hover { color: var(--primary-lt); }
+
+.empty-state {
+  text-align: center; padding: 40px 20px; color: var(--text-sub);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.empty-state i { font-size: 2rem; opacity: 0.25; }
+.empty-state p  { font-size: 0.85rem; }
+
+/* CASA */
+.casa-section {
+  background: var(--card-bg); border-radius: var(--radius-lg);
+  padding: 24px; border: 1px solid var(--border);
+}
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+}
+.section-header h2 {
+  font-size: 0.95rem; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-header h2 i { color: var(--teal); }
+
+.casa-total-wrap {
+  font-size: 0.8rem; color: var(--text-sub);
+  display: flex; align-items: center; gap: 6px;
+}
+.casa-total-wrap strong { color: var(--teal); font-size: 0.95rem; }
+
+.casa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+  gap: 12px;
+}
+
+.casa-item {
+  background: var(--bg2); padding: 15px; border-radius: var(--radius);
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid var(--border);
+  transition: border-color var(--tr);
+}
+.casa-item:focus-within { border-color: rgba(20,184,166,0.4); }
+
+.casa-item-icon {
+  width: 34px; height: 34px; background: var(--teal-dim); color: var(--teal);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; flex-shrink: 0;
+}
+
+.casa-item-info { flex: 1; min-width: 0; }
+.casa-item-info label {
+  display: block; font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  color: var(--text-sub); margin-bottom: 5px;
+}
+.casa-item-info label small {
+  background: var(--primary); color: #fff; font-size: 9px;
+  padding: 1px 5px; border-radius: 4px; margin-left: 4px;
+  text-transform: none; letter-spacing: 0; font-style: normal;
+}
+
+.casa-input {
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  padding: 8px 10px !important;
+  font-size: 0.88rem !important;
+  border-radius: 6px !important;
+  font-family: 'Inter', monospace !important;
+  transition: border-color var(--tr) !important;
+}
+.casa-input:focus {
+  border-color: var(--teal) !important;
+  box-shadow: 0 0 0 3px rgba(20,184,166,0.12) !important;
+}
+
+/* SAVE ALL BAR */
+.save-all-bar {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  grid-column: 1 / -1;
+}
+.save-all-info strong { display: block; font-size: 0.95rem; font-weight: 600; }
+.save-all-info span   { font-size: 0.8rem; color: var(--text-sub); }
+.save-all-actions     { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.btn-secondary {
+  display: flex; align-items: center; gap: 7px;
+  padding: 10px 16px; background: transparent;
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text-sub); font-family: 'Inter', sans-serif;
+  font-size: 0.85rem; font-weight: 500; cursor: pointer;
+  transition: background var(--tr), color var(--tr), border-color var(--tr);
+}
+.btn-secondary:hover {
+  background: var(--card-hover);
+  border-color: rgba(255,255,255,0.15);
+  color: var(--text);
+}
+
+.btn-primary-lg {
+  display: flex; align-items: center; gap: 9px;
+  padding: 11px 22px; background: var(--primary);
+  border: none; border-radius: 10px; color: #fff;
+  font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; box-shadow: 0 4px 18px rgba(124,58,237,0.35);
+  transition: filter var(--tr), transform var(--tr), box-shadow var(--tr);
+}
+.btn-primary-lg:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(124,58,237,0.45);
+}
+.btn-primary-lg:active { transform: scale(0.98); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--card-bg); border: 1px solid var(--green);
+  border-radius: var(--radius); padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  transform: translateY(80px); opacity: 0;
+  transition: transform 0.35s cubic-bezier(.22,.9,.36,1), opacity 0.3s;
+  z-index: 999; pointer-events: none; min-width: 260px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon {
+  width: 32px; height: 32px; background: var(--green-dim);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; color: var(--green);
+  font-size: 13px; flex-shrink: 0;
+}
+.toast-text strong { display: block; font-size: 0.85rem; color: var(--text); }
+.toast-text span   { font-size: 0.75rem; color: var(--text-sub); }
+
+/* RESPONSIVO */
+@media (max-width: 850px) {
+  .content { grid-template-columns: 1fr; }
+  .form-group { position: static; }
+  .summary-cards { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 500px) {
+  .summary-cards { grid-template-columns: 1fr; }
+  .header-top { justify-content: center; text-align: center; }
+  .header-title { flex-direction: column; }
+  .casa-grid { grid-template-columns: 1fr; }
+  .save-all-bar { flex-direction: column; align-items: flex-start; }
+  .toast { right: 16px; left: 16px; min-width: unset; }
+}
+  </style>
 </head>
 <body>
 
-  <div class="dashboard">
+<div class="dashboard">
 
-    <!-- HEADER -->
-    <header class="main-header">
-      <div class="header-top">
-        <div class="header-title">
-          <i class="fas fa-wallet"></i>
-          <div>
-            <h1>Controle Financeiro</h1>
-            <span class="header-sub">Gerencie suas finanças com clareza</span>
-          </div>
+  <!-- HEADER -->
+  <header class="main-header">
+    <div class="header-top">
+      <div class="header-title">
+        <i class="fas fa-wallet"></i>
+        <div>
+          <h1 style="font-size:1.4rem;font-weight:700;letter-spacing:-0.3px;">Controle Financeiro</h1>
+          <span style="font-size:0.78rem;color:var(--text-sub);">Gerencie suas finanças com clareza</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="last-saved-badge" id="last-saved-badge">
+          <i class="fas fa-circle"></i>
+          <span id="last-saved-text">Salvo agora</span>
         </div>
         <div class="month-filter">
-          <label><i class="fas fa-calendar-alt"></i> Mês:</label>
-          <input type="month" id="filter-month" onchange="updateUI()">
+          <label style="font-size:0.82rem;color:var(--text-sub);white-space:nowrap;">
+            <i class="fas fa-calendar-alt"></i> Mês:
+          </label>
+          <input type="month" id="filter-month">
         </div>
       </div>
+    </div>
 
-      <!-- CARDS DE RESUMO -->
-      <div class="summary-cards">
-        <div class="card balance-card">
-          <div class="card-icon"><i class="fas fa-scale-balanced"></i></div>
-          <div class="card-info">
-            <span>Saldo do Mês</span>
-            <strong id="total-balance">R$ 0,00</strong>
-          </div>
-        </div>
-        <div class="card income-card">
-          <div class="card-icon"><i class="fas fa-arrow-trend-up"></i></div>
-          <div class="card-info">
-            <span>Entradas</span>
-            <strong id="sum-income">R$ 0,00</strong>
-          </div>
-        </div>
-        <div class="card expense-card">
-          <div class="card-icon"><i class="fas fa-arrow-trend-down"></i></div>
-          <div class="card-info">
-            <span>Saídas</span>
-            <strong id="sum-expenses">R$ 0,00</strong>
-          </div>
-        </div>
-        <div class="card gas-card">
-          <div class="card-icon"><i class="fas fa-gas-pump"></i></div>
-          <div class="card-info">
-            <span>Gasolina</span>
-            <strong id="sum-gas">R$ 0,00</strong>
-          </div>
-        </div>
-        <div class="card market-card">
-          <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
-          <div class="card-info">
-            <span>Mercado</span>
-            <strong id="sum-market">R$ 0,00</strong>
-          </div>
-        </div>
-        <div class="card extra-card">
-          <div class="card-icon"><i class="fas fa-plus-circle"></i></div>
-          <div class="card-info">
-            <span>Renda Extra</span>
-            <strong id="sum-extra">R$ 0,00</strong>
-          </div>
-        </div>
-        <div class="card casa-card">
-          <div class="card-icon"><i class="fas fa-house"></i></div>
-          <div class="card-info">
-            <span>Despesas Casa</span>
-            <strong id="sum-casa">R$ 0,00</strong>
-          </div>
-        </div>
+    <div class="summary-cards">
+      <div class="card balance-card">
+        <div class="card-icon"><i class="fas fa-scale-balanced"></i></div>
+        <div class="card-info"><span>Saldo do Mês</span><strong id="total-balance">R$ 0,00</strong></div>
       </div>
-    </header>
+      <div class="card income-card">
+        <div class="card-icon"><i class="fas fa-arrow-trend-up"></i></div>
+        <div class="card-info"><span>Entradas</span><strong id="sum-income">R$ 0,00</strong></div>
+      </div>
+      <div class="card expense-card">
+        <div class="card-icon"><i class="fas fa-arrow-trend-down"></i></div>
+        <div class="card-info"><span>Saídas</span><strong id="sum-expenses">R$ 0,00</strong></div>
+      </div>
+      <div class="card gas-card">
+        <div class="card-icon"><i class="fas fa-gas-pump"></i></div>
+        <div class="card-info"><span>Gasolina</span><strong id="sum-gas">R$ 0,00</strong></div>
+      </div>
+      <div class="card market-card">
+        <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+        <div class="card-info"><span>Mercado</span><strong id="sum-market">R$ 0,00</strong></div>
+      </div>
+      <div class="card extra-card">
+        <div class="card-icon"><i class="fas fa-plus-circle"></i></div>
+        <div class="card-info"><span>Renda Extra</span><strong id="sum-extra">R$ 0,00</strong></div>
+      </div>
+      <div class="card casa-card">
+        <div class="card-icon"><i class="fas fa-house"></i></div>
+        <div class="card-info"><span>Despesas Casa</span><strong id="sum-casa">R$ 0,00</strong></div>
+      </div>
+    </div>
+  </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="content">
+  <!-- MAIN -->
+  <main class="content">
 
-      <!-- FORMULÁRIO -->
-      <section class="input-section">
+    <!-- FORMULÁRIO -->
+    <section class="input-section">
+      <div class="form-group">
         <h2 id="form-title"><i class="fas fa-plus"></i> Novo Registro</h2>
-        <div class="form-group">
-          <input type="hidden" id="edit-id">
+        <input type="hidden" id="edit-id">
 
-          <div class="field">
-            <label>Descrição</label>
-            <input type="text" id="desc" placeholder="Ex: Mercado BH, Gasolina Shell...">
-          </div>
-
-          <div class="field">
-            <label>Valor (R$)</label>
-            <input type="number" id="val" placeholder="0,00" step="0.01" min="0">
-          </div>
-
-          <div class="field">
-            <label>Categoria</label>
-            <select id="type">
-              <option value="income">💰 Salário / Fixo</option>
-              <option value="extra">🟢 Renda Extra</option>
-              <option value="gas">⛽ Gasolina</option>
-              <option value="market">🛒 Mercado</option>
-              <option value="expense">💸 Outros Gastos</option>
-              <option value="casa">🏠 Despesa da Casa</option>
-            </select>
-          </div>
-
-          <div class="field-group" style="display: flex; gap: 10px;">
-            <div class="field">
-              <label>Parcela Atual</label>
-              <input type="number" id="current-installment" placeholder="Ex: 1" min="1">
-            </div>
-            <div class="field">
-              <label>Total Parcelas</label>
-              <input type="number" id="total-installments" placeholder="Ex: 12" min="1">
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button id="btn-save" onclick="handleSave()">
-              <i class="fas fa-save"></i> Salvar
-            </button>
-            <button id="btn-cancel" onclick="clearForm()">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-          </div>
+        <div class="field">
+          <label>Descrição</label>
+          <input type="text" id="desc" placeholder="Ex: Mercado BH, Gasolina Shell...">
         </div>
-      </section>
-          </div>=
-
-          <div class="form-actions">
-            <button id="btn-save" onclick="handleSave()">
-              <i class="fas fa-save"></i> Salvar
-            </button>
-            <button id="btn-cancel" onclick="clearForm()">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-          </div>
+        <div class="field">
+          <label>Valor (R$)</label>
+          <input type="number" id="val" placeholder="0,00" step="0.01" min="0">
         </div>
-      </section>
-
-      <!-- LISTA DE TRANSAÇÕES -->
-      <section class="list-section">
-        <div class="list-header">
-          <h2><i class="fas fa-list"></i> Histórico do Mês</h2>
-          <span id="transaction-count" class="badge">0 registros</span>
+        <div class="field">
+          <label>Categoria</label>
+          <select id="type">
+            <option value="">Selecionar categoria...</option>
+            <option value="income">💰 Entrada</option>
+            <option value="expense">💸 Saída</option>
+            <option value="gas">⛽ Gasolina</option>
+            <option value="market">🛒 Mercado</option>
+            <option value="extra">✨ Renda Extra</option>
+            <option value="casa">🏠 Despesas Casa</option>
+          </select>
         </div>
-        <ul id="transaction-list">
-          <li class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <p>Nenhum registro neste mês.</p>
-          </li>
-        </ul>
-      </section>
 
-    </main>
+        <!-- BOTÃO SALVAR -->
+        <button class="btn-save" id="btn-save">
+          <i class="fas fa-floppy-disk" id="btn-icon"></i>
+          <span id="btn-label">Salvar Registro</span>
+        </button>
 
-    <!-- DESPESAS DA CASA -->
-    <section class="casa-section">
+        <div class="save-feedback" id="save-feedback">
+          <i class="fas fa-check-circle"></i> Registro adicionado!
+        </div>
+
+        <button id="btn-cancel">
+          <i class="fas fa-xmark"></i> Cancelar edição
+        </button>
+      </div>
+    </section>
+
+    <!-- LISTA -->
+    <section class="list-section">
+      <div class="list-header">
+        <h2><i class="fas fa-list-ul"></i> Registros do Mês</h2>
+        <span id="record-count">0 itens</span>
+      </div>
+      <ul id="transaction-list"></ul>
+    </section>
+
+    <!-- CASA -->
+    <section class="casa-section" style="grid-column:1/-1;">
       <div class="section-header">
-        <div class="section-header-left">
-          <h2><i class="fas fa-house"></i> Despesas da Casa</h2>
-          <span class="badge" id="casa-month-label"></span>
-        </div>
+        <h2><i class="fas fa-house"></i> Despesas Fixas da Casa</h2>
         <div class="casa-total-wrap">
-          <span>Total do mês:</span>
+          <span>Total desta seção:</span>
           <strong id="casa-total-display">R$ 0,00</strong>
         </div>
       </div>
-
       <div class="casa-grid" id="casa-grid">
-
         <div class="casa-item" data-key="aluguel">
           <div class="casa-item-icon"><i class="fas fa-key"></i></div>
           <div class="casa-item-info">
             <label>Aluguel</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
         <div class="casa-item" data-key="condominio">
           <div class="casa-item-icon"><i class="fas fa-building"></i></div>
           <div class="casa-item-info">
             <label>Condomínio</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
         <div class="casa-item" data-key="desp_op">
-          <div class="casa-item-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+          <div class="casa-item-icon"><i class="fas fa-gears"></i></div>
           <div class="casa-item-info">
-            <label>Desp. Operacional</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <label>Desp. Op.</label>
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
-        <div class="casa-item" data-key="seguro">
-          <div class="casa-item-icon"><i class="fas fa-fire-extinguisher"></i></div>
+        <div class="casa-item" data-key="seguro_incendio">
+          <div class="casa-item-icon"><i class="fas fa-shield-halved"></i></div>
           <div class="casa-item-info">
-            <label>Seguro Incêndio <small>(5/6)</small></label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <label>Seguro Incêndio</label>
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
         <div class="casa-item" data-key="agua">
           <div class="casa-item-icon"><i class="fas fa-droplet"></i></div>
           <div class="casa-item-info">
             <label>Água</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
-        <div class="casa-item" data-key="energia">
-          <div class="casa-item-icon"><i class="fas fa-bolt"></i></div>
-          <div class="casa-item-info">
-            <label>Energia</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
-          </div>
-          <span class="casa-item-val">—</span>
-        </div>
-
         <div class="casa-item" data-key="internet">
           <div class="casa-item-icon"><i class="fas fa-wifi"></i></div>
           <div class="casa-item-info">
             <label>Internet</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
+        <div class="casa-item" data-key="energia">
+          <div class="casa-item-icon"><i class="fas fa-bolt"></i></div>
+          <div class="casa-item-info">
+            <label>Energia</label>
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
+          </div>
+        </div>
         <div class="casa-item" data-key="gas_consumo">
           <div class="casa-item-icon"><i class="fas fa-fire-flame-simple"></i></div>
           <div class="casa-item-info">
-            <label>Gás (consumo)</label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <label>Gás (Consumo)</label>
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
-        <div class="casa-item" data-key="iptu">
-          <div class="casa-item-icon"><i class="fas fa-landmark"></i></div>
+        <div class="casa-item" data-key="iptu_2026">
+          <div class="casa-item-icon"><i class="fas fa-file-invoice-dollar"></i></div>
           <div class="casa-item-info">
-            <label>IPTU 2026 <small>(2/8)</small></label>
-            <input type="number" class="casa-input" placeholder="0,00" step="0.01" min="0" onchange="saveCasa()">
+            <label>IPTU 2026 <small>2/8</small></label>
+            <input type="number" class="casa-input" placeholder="0,00" step="0.01">
           </div>
-          <span class="casa-item-val">—</span>
         </div>
-
-      </div><!-- /casa-grid -->
-    </section>
-
-    <!-- RESUMO ANUAL -->
-    <section class="yearly-summary">
-      <div class="section-header">
-        <h2><i class="fas fa-chart-bar"></i> Resumo Anual</h2>
-        <span id="year-label" class="badge"></span>
       </div>
-      <div id="year-list" class="year-grid"></div>
     </section>
 
-  </div><!-- /dashboard -->
+    <!-- SAVE ALL BAR -->
+    <div class="save-all-bar">
+      <div class="save-all-info">
+        <strong>Salvar todos os dados</strong>
+        <span>Registros do mês + despesas fixas da casa</span>
+      </div>
+      <div class="save-all-actions">
+        <button class="btn-secondary" id="btn-export">
+          <i class="fas fa-download"></i> Exportar CSV
+        </button>
+        <button class="btn-secondary" id="btn-clear-casa">
+          <i class="fas fa-rotate-left"></i> Limpar Casa
+        </button>
+        <button class="btn-primary-lg" id="btn-save-all">
+          <i class="fas fa-cloud-arrow-up"></i> Salvar Tudo
+        </button>
+      </div>
+    </div>
 
-  <script src="script.js"></script>
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon"><i class="fas fa-check"></i></div>
+  <div class="toast-text">
+    <strong id="toast-title">Dados salvos!</strong>
+    <span id="toast-msg">Todos os registros foram salvos com sucesso.</span>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'controle_financeiro_pro';
+const CASA_KEY    = 'controle_casa_data';
+
+const el = {
+  desc:             document.getElementById('desc'),
+  val:              document.getElementById('val'),
+  type:             document.getElementById('type'),
+  list:             document.getElementById('transaction-list'),
+  month:            document.getElementById('filter-month'),
+  editId:           document.getElementById('edit-id'),
+  balance:          document.getElementById('total-balance'),
+  income:           document.getElementById('sum-income'),
+  expenses:         document.getElementById('sum-expenses'),
+  sumGas:           document.getElementById('sum-gas'),
+  sumMarket:        document.getElementById('sum-market'),
+  sumExtra:         document.getElementById('sum-extra'),
+  sumCasa:          document.getElementById('sum-casa'),
+  casaTotalDisplay: document.getElementById('casa-total-display'),
+  casaInputs:       document.querySelectorAll('.casa-input'),
+  btnSave:          document.getElementById('btn-save'),
+  btnLabel:         document.getElementById('btn-label'),
+  btnIcon:          document.getElementById('btn-icon'),
+  saveFeedback:     document.getElementById('save-feedback'),
+  recordCount:      document.getElementById('record-count'),
+  lastSavedBadge:   document.getElementById('last-saved-badge'),
+  lastSavedText:    document.getElementById('last-saved-text'),
+};
+
+let transactions = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let casaData     = JSON.parse(localStorage.getItem(CASA_KEY))    || {};
+
+const formatBRL = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!el.month.value) el.month.value = new Date().toISOString().slice(0, 7);
+
+  loadCasaInputs();
+  updateUI();
+
+  el.btnSave.addEventListener('click', handleSave);
+  document.getElementById('btn-cancel').addEventListener('click', clearForm);
+  el.month.addEventListener('change', () => { loadCasaInputs(); updateUI(); });
+  el.casaInputs.forEach(input => input.addEventListener('input', () => { saveCasa(); updateUI(); }));
+
+  document.getElementById('btn-save-all').addEventListener('click', () => {
+    saveCasa();
+    showToast('Dados salvos!', 'Todos os registros foram salvos com sucesso.', 'green');
+    updateLastSaved();
+  });
+
+  document.getElementById('btn-export').addEventListener('click', exportCSV);
+
+  document.getElementById('btn-clear-casa').addEventListener('click', () => {
+    if (!confirm('Limpar todos os campos de despesas da casa deste mês?')) return;
+    casaData[el.month.value] = {};
+    localStorage.setItem(CASA_KEY, JSON.stringify(casaData));
+    el.casaInputs.forEach(i => i.value = '');
+    updateUI();
+    showToast('Campos limpos', 'Despesas da casa foram resetadas.', 'green');
+  });
+
+  // ripple
+  el.btnSave.addEventListener('click', function(e) {
+    const r = document.createElement('span');
+    r.className = 'ripple-el';
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    this.appendChild(r);
+    setTimeout(() => r.remove(), 500);
+  });
+});
+
+function handleSave() {
+  const desc   = el.desc.value.trim();
+  const val    = parseFloat(el.val.value);
+  const type   = el.type.value;
+  const date   = el.month.value;
+  const editId = el.editId.value;
+
+  if (!desc || isNaN(val) || val <= 0 || !type) {
+    el.btnSave.classList.add('error');
+    setTimeout(() => el.btnSave.classList.remove('error'), 600);
+    return;
+  }
+
+  const transaction = { id: editId ? Number(editId) : Date.now(), desc, val, type, date };
+
+  if (editId) {
+    const idx = transactions.findIndex(t => t.id == editId);
+    transactions[idx] = transaction;
+  } else {
+    transactions.push(transaction);
+  }
+
+  persist();
+  clearForm();
+  animateSaveBtn();
+  updateLastSaved();
+}
+
+function animateSaveBtn() {
+  el.btnSave.classList.add('saved');
+  el.btnLabel.textContent = 'Salvo!';
+  el.btnIcon.className = 'fas fa-check';
+  el.saveFeedback.classList.add('show');
+  setTimeout(() => {
+    el.btnSave.classList.remove('saved');
+    el.btnLabel.textContent = 'Salvar Registro';
+    el.btnIcon.className = 'fas fa-floppy-disk';
+    el.saveFeedback.classList.remove('show');
+  }, 2000);
+}
+
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+  updateUI();
+}
+
+function saveCasa() {
+  const month = el.month.value;
+  if (!casaData[month]) casaData[month] = {};
+  el.casaInputs.forEach(input => {
+    const key = input.closest('.casa-item').dataset.key;
+    casaData[month][key] = input.value;
+  });
+  localStorage.setItem(CASA_KEY, JSON.stringify(casaData));
+}
+
+function loadCasaInputs() {
+  const data = casaData[el.month.value] || {};
+  el.casaInputs.forEach(input => {
+    const key = input.closest('.casa-item').dataset.key;
+    input.value = data[key] || '';
+  });
+}
+
+function clearForm() {
+  el.desc.value = ''; el.val.value = ''; el.type.value = ''; el.editId.value = '';
+  document.getElementById('form-title').innerHTML = '<i class="fas fa-plus"></i> Novo Registro';
+  el.btnLabel.textContent = 'Salvar Registro';
+  el.btnIcon.className = 'fas fa-floppy-disk';
+}
+
+function updateUI() {
+  const month    = el.month.value;
+  const filtered = transactions.filter(t => t.date === month);
+
+  let totals = { income:0, extra:0, gas:0, market:0, expense:0, casa:0 };
+  filtered.forEach(t => { if (totals[t.type] !== undefined) totals[t.type] += t.val; });
+
+  let casaSum = 0;
+  Object.values(casaData[month] || {}).forEach(v => casaSum += (parseFloat(v) || 0));
+
+  const totalIn  = totals.income + totals.extra;
+  const totalOut = totals.gas + totals.market + totals.expense + totals.casa + casaSum;
+  const saldo    = totalIn - totalOut;
+
+  el.income.textContent   = formatBRL(totalIn);
+  el.expenses.textContent = formatBRL(totalOut);
+  el.balance.textContent  = formatBRL(saldo);
+  el.balance.style.color  = saldo >= 0 ? 'var(--green)' : 'var(--red)';
+
+  if (el.sumGas)           el.sumGas.textContent           = formatBRL(totals.gas);
+  if (el.sumMarket)        el.sumMarket.textContent        = formatBRL(totals.market);
+  if (el.sumExtra)         el.sumExtra.textContent         = formatBRL(totals.extra);
+  if (el.sumCasa)          el.sumCasa.textContent          = formatBRL(casaSum + totals.casa);
+  if (el.casaTotalDisplay) el.casaTotalDisplay.textContent = formatBRL(casaSum);
+  if (el.recordCount)      el.recordCount.textContent      = `${filtered.length} ${filtered.length === 1 ? 'item' : 'itens'}`;
+
+  renderList(filtered);
+}
+
+function renderList(data) {
+  el.list.innerHTML = '';
+  if (!data.length) {
+    el.list.innerHTML = `<li class="empty-state"><i class="fas fa-inbox"></i><p>Sem registros para este mês.</p><p style="font-size:0.75rem;">Adicione um registro no formulário ao lado.</p></li>`;
+    return;
+  }
+
+  const labels = { income:'Entrada', extra:'Renda Extra', gas:'Gasolina', market:'Mercado', expense:'Saída', casa:'Casa' };
+  const frag   = document.createDocumentFragment();
+
+  data.slice().reverse().forEach(t => {
+    const li = document.createElement('li');
+    li.className = `item ${t.type}`;
+    const isIn = t.type === 'income' || t.type === 'extra';
+    li.innerHTML = `
+      <div class="item-left">
+        <span class="item-desc">${t.desc}</span>
+        <span class="item-cat">${labels[t.type] || t.type}</span>
+      </div>
+      <div class="item-right">
+        <span class="item-val">${isIn ? '+' : '−'} ${formatBRL(t.val)}</span>
+        <div class="actions">
+          <i class="fas fa-pen-to-square" data-id="${t.id}" title="Editar"></i>
+          <i class="fas fa-trash"         data-id="${t.id}" title="Excluir"></i>
+        </div>
+      </div>`;
+    frag.appendChild(li);
+  });
+  el.list.appendChild(frag);
+}
+
+el.list.addEventListener('click', e => {
+  const id = Number(e.target.dataset.id);
+  if (!id) return;
+
+  if (e.target.classList.contains('fa-trash')) {
+    if (confirm('Deseja excluir este registro?')) {
+      transactions = transactions.filter(t => t.id !== id);
+      persist();
+    }
+  }
+
+  if (e.target.classList.contains('fa-pen-to-square')) {
+    const t = transactions.find(t => t.id === id);
+    el.desc.value = t.desc; el.val.value = t.val;
+    el.type.value = t.type; el.editId.value = t.id;
+    document.getElementById('form-title').innerHTML = '<i class="fas fa-pen-to-square"></i> Editando Registro';
+    el.btnLabel.textContent = 'Atualizar Registro';
+    el.btnIcon.className    = 'fas fa-pen-to-square';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
+
+function showToast(title, msg, type = 'green') {
+  const t    = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-msg').textContent   = msg;
+  const c = { green:'var(--green)', red:'var(--red)', yellow:'var(--yellow)' };
+  const d = { green:'var(--green-dim)', red:'var(--red-dim)', yellow:'var(--yellow-dim)' };
+  t.style.borderColor    = c[type] || c.green;
+  icon.style.background  = d[type] || d.green;
+  icon.style.color       = c[type] || c.green;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function updateLastSaved() {
+  el.lastSavedBadge.classList.add('visible');
+  const now = new Date();
+  el.lastSavedText.textContent = `Salvo às ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+
+function exportCSV() {
+  const month    = el.month.value;
+  const filtered = transactions.filter(t => t.date === month);
+  if (!filtered.length) { showToast('Nada para exportar', 'Sem registros neste mês.', 'yellow'); return; }
+  const rows = filtered.map(t => `"${t.desc}",${t.val},${t.type},${t.date}`).join('\n');
+  const blob = new Blob(['Descrição,Valor,Categoria,Mês\n' + rows], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `financeiro_${month}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV exportado!', `financeiro_${month}.csv gerado com sucesso.`, 'green');
+}
+</script>
 </body>
 </html>
